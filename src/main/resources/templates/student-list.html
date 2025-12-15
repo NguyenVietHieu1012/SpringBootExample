@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>DANH SÁCH HỌC SINH</h2>
+
+<a href="/students/new">➕ Thêm học sinh</a>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Tên</th>
+        <th>Tuổi</th>
+        <th>Hành động</th>
+    </tr>
+
+    <tr th:each="s : ${students}">
+        <td th:text="${s.id}"></td>
+        <td th:text="${s.name}"></td>
+        <td th:text="${s.age}"></td>
+        <td>
+            <a th:href="@{/students/delete/{id}(id=${s.id})}">
+                ❌ Xóa
+            </a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

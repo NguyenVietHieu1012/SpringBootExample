@@ -1,0 +1,79 @@
+GIẢI THÍCH CƠ BẢN SPRING BOOT (NGẮN GỌN + VÍ DỤ)
+
+1. Bean là gì?
+- Bean là một object do Spring tạo và quản lý.
+- Spring sẽ tạo object sẵn và lưu trong Spring Container.
+- Khi cần dùng, Spring sẽ cấp object đó ra.
+
+Ví dụ (Java thường):
+    HelloService service = new HelloService();
+
+Ví dụ (Spring Bean):
+    @Component
+    public class HelloService {}
+
+→ Spring tự tạo object HelloService, bạn không cần new.
+
+
+2. @Component là gì?
+- @Component dùng để đánh dấu một class là Bean.
+- Khi Spring Boot khởi động, nó sẽ quét project.
+- Class nào có @Component thì Spring sẽ tạo Bean cho class đó.
+
+Ví dụ:
+@Component
+public class HelloService {
+
+    public String sayHello() {
+        return "Hello Spring Boot";
+    }
+}
+
+→ HelloService trở thành Bean do Spring quản lý.
+
+
+3. @Autowired là gì?
+- @Autowired dùng để yêu cầu Spring inject (truyền) Bean vào class khác.
+- Bạn không cần tự tạo object bằng new.
+- Spring sẽ tìm Bean phù hợp và gán vào biến.
+
+Ví dụ:
+@RestController
+public class HelloController {
+
+    @Autowired
+    private HelloService helloService;
+
+    @GetMapping("/hello")
+    public String hello() {
+        return helloService.sayHello();
+    }
+}
+
+→ Spring tự động truyền HelloService vào HelloController.
+
+
+4. @GetMapping là gì?
+- @GetMapping dùng để ánh xạ URL với method.
+- Khi client gửi HTTP GET request, Spring gọi method tương ứng.
+
+Ví dụ:
+@GetMapping("/hello")
+public String hello() {
+    return "Hello";
+}
+
+→ Truy cập: http://localhost:8080/hello
+
+
+5. @RestController là gì?
+- @RestController dùng cho class xử lý request web.
+- Method trả về dữ liệu trực tiếp (String, JSON, Object).
+- Không cần giao diện HTML.
+
+TÓM TẮT:
+- Bean: object do Spring quản lý
+- @Component: đánh dấu class là Bean
+- @Autowired: Spring tự truyền Bean vào
+- @GetMapping: gắn URL cho method
+- @RestController: class xử lý request HTTP

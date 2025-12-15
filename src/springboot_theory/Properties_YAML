@@ -1,0 +1,61 @@
+VÍ DỤ APPLICATION.PROPERTIES VÀ APPLICATION.YML (SPRING BOOT)
+
+--------------------------------
+1. application.properties
+--------------------------------
+
+Ví dụ 1: Đổi cổng chạy server
+--------------------------------
+server.port=8081
+
+Nghĩa:
+- Ứng dụng Spring Boot sẽ chạy ở cổng 8081
+- Truy cập: http://localhost:8081
+
+
+Ví dụ 2: Đặt tên ứng dụng
+--------------------------------
+spring.application.name=demo-app
+
+Nghĩa:
+- Tên của ứng dụng là demo-app
+
+
+Ví dụ 3: Tạo cấu hình tự định nghĩa
+--------------------------------
+my.name=Hieu
+my.age=18
+
+Nghĩa:
+- Tạo 2 biến cấu hình: name và age
+
+
+--------------------------------
+2. application.yml
+--------------------------------
+
+Ví dụ 1: Đổi cổng chạy server
+--------------------------------
+server:
+  port: 8081
+
+
+Ví dụ 2: Đặt tên ứng dụng
+--------------------------------
+spring:
+  application:
+    name: demo-app
+
+Nghĩa:
+- Tên ứng dụng là demo-app
+
+
+Ví dụ 3: Tạo cấu hình tự định nghĩa
+--------------------------------
+my:
+  name: Hieu
+  age: 18
+
+LƯU Ý:
+- Spring Boot chỉ cần 1 trong 2
+- Không nên cấu hình trùng nhau ở cả properties và yaml

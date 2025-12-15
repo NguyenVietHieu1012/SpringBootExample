@@ -1,0 +1,173 @@
+APPLICATION PROFILE TRONG SPRING BOOT
+
+==================================================
+1. Application Profile là gì?
+==================================================
+
+- Profile là "chế độ chạy" của ứng dụng Spring Boot.
+- Cùng một chương trình nhưng có thể chạy theo nhiều môi trường khác nhau.
+- Mỗi profile có cấu hình riêng.
+
+Ví dụ đời thường:
+- Điện thoại có chế độ Ban ngày / Ban đêm.
+- Game có chế độ Dễ / Trung bình / Khó.
+
+Trong Spring Boot thường có:
+- dev  : lập trình
+- test : kiểm thử
+- prod : chạy thật
+
+
+==================================================
+2. Vì sao cần Application Profile?
+==================================================
+
+- Mỗi môi trường cần cấu hình khác nhau.
+- Không thể dùng chung một file cấu hình cho tất cả môi trường.
+
+Ví dụ:
+- Dev chạy cổng 8080
+- Prod chạy cổng 80
+- Database dev và prod khác nhau
+
+
+==================================================
+3. Đặt file cấu hình cho từng Profile
+==================================================
+
+Dạng properties:
+- application-dev.properties
+- application-test.properties
+- application-prod.properties
+
+Dạng yaml:
+- application-dev.yml
+- application-prod.yml
+
+
+==================================================
+4. Ví dụ cấu hình bằng properties
+==================================================
+
+File: application-dev.properties
+--------------------------------
+server.port=8080
+my.env=DEV
+
+Nghĩa:
+- Chạy server ở cổng 8080
+- Môi trường DEV
+
+
+File: application-prod.properties
+--------------------------------
+server.port=80
+my.env=PROD
+
+Nghĩa:
+- Chạy server ở cổng 80
+- Môi trường PROD
+
+
+==================================================
+5. Bật Profile trong Spring Boot
+==================================================
+
+Cách 1: Bật trong application.properties
+--------------------------------
+spring.profiles.active=dev
+
+Nghĩa:
+- Ứng dụng chạy ở chế độ DEV
+
+
+Cách 2: Bật khi chạy chương trình
+--------------------------------
+-Dspring.profiles.active=prod
+
+Nghĩa:
+- Ứng dụng chạy ở chế độ PROD
+
+
+==================================================
+6. Lấy giá trị cấu hình theo Profile
+==================================================
+
+File: application-dev.properties
+--------------------------------
+my.message=Hello Dev
+
+
+File: application-prod.properties
+--------------------------------
+my.message=Hello Production
+
+
+Code Java:
+--------------------------------
+@Value("${my.message}")
+private String message;
+
+Nghĩa:
+- Profile nào đang chạy thì lấy message của profile đó
+
+
+==================================================
+7. Ví dụ dùng @Profile trong Spring
+==================================================
+
+Interface:
+--------------------------------
+public interface MessageService {
+    String getMessage();
+}
+
+
+Bean cho DEV:
+--------------------------------
+@Component
+@Profile("dev")
+public class DevMessageService implements MessageService {
+
+    public String getMessage() {
+        return "Hello from DEV";
+    }
+}
+
+
+Bean cho PROD:
+--------------------------------
+@Component
+@Profile("prod")
+public class ProdMessageService implements MessageService {
+
+    public String getMessage() {
+        return "Hello from PROD";
+    }
+}
+
+Nghĩa:
+- Spring chỉ tạo Bean đúng với profile đang chạy
+
+
+==================================================
+8. Lưu ý quan trọng
+==================================================
+
+- Chỉ có 1 profile được active tại một thời điểm (thường).
+- Không nên hard-code giá trị môi trường trong code.
+- Profile giúp code sạch và dễ triển khai.
+
+
+==================================================
+9. Tóm tắt nhanh
+==================================================
+
+Profile           : Chế độ chạy
+dev               : Lập trình
+test              : Kiểm thử
+prod              : Chạy thật
+spring.profiles.active : Chọn profile
+
+CÂU NHỚ:
+"Cùng một ứng dụng, nhiều cách chạy"

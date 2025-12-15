@@ -1,0 +1,140 @@
+ENTITY & REPOSITORY TRONG SPRING DATA JPA
+
+==================================================
+1. Entity là gì?
+==================================================
+
+- Entity là đại diện cho một bảng trong database.
+- Mỗi Entity tương ứng với một bảng.
+- Mỗi object của Entity tương ứng với một dòng dữ liệu.
+
+Ví dụ đời thường:
+- Entity giống như mẫu thông tin học sinh.
+- Mỗi dòng là một học sinh.
+
+Ví dụ bảng Student:
+- id
+- name
+- age
+
+
+==================================================
+2. Ví dụ Entity trong Spring Boot
+==================================================
+
+Code:
+--------------------------------
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
+public class Student {
+
+    @Id
+    private Long id;
+    private String name;
+    private int age;
+
+    public Student() {}
+
+    // getter & setter
+}
+
+Giải thích:
+- @Entity: đánh dấu class là bảng trong database
+- @Id: khóa chính, không được trùng
+- Field trong class = cột trong bảng
+
+
+==================================================
+3. Repository là gì?
+==================================================
+
+- Repository là nơi làm việc với database.
+- Repository dùng để lưu, lấy, xóa dữ liệu.
+- Không cần viết câu lệnh SQL.
+
+
+==================================================
+4. Ví dụ Repository trong Spring Data JPA
+==================================================
+
+Code:
+--------------------------------
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StudentRepository
+        extends JpaRepository<Student, Long> {
+}
+
+Giải thích:
+- Student: Entity làm việc cùng
+- Long: kiểu dữ liệu của id
+- JpaRepository đã có sẵn nhiều hàm
+
+
+==================================================
+5. Các hàm Repository thường dùng
+==================================================
+
+- save()        : lưu dữ liệu
+- findAll()     : lấy tất cả dữ liệu
+- findById()    : lấy theo id
+- deleteById()  : xóa theo id
+
+
+==================================================
+6. Ví dụ sử dụng Entity + Repository
+==================================================
+
+Lưu học sinh:
+--------------------------------
+@Autowired
+private StudentRepository studentRepository;
+
+public void saveStudent() {
+    Student s = new Student();
+    s.setId(1L);
+    s.setName("Nam");
+    s.setAge(18);
+
+    studentRepository.save(s);
+}
+
+Nghĩa:
+- Tạo object Student
+- Gọi save()
+- Spring tự lưu vào database
+
+
+Lấy danh sách học sinh:
+--------------------------------
+List<Student> list = studentRepository.findAll();
+
+Nghĩa:
+- Lấy tất cả học sinh trong database
+
+
+==================================================
+7. Luồng hoạt động
+==================================================
+
+Student (Entity)
+      ↓
+StudentRepository
+      ↓
+Database
+
+
+==================================================
+8. Tóm tắt nhanh
+==================================================
+
+Entity        : Bảng dữ liệu
+@Entity       : Đánh dấu bảng
+@Id           : Khóa chính
+Repository    : Làm việc với database
+JpaRepository : Công cụ có sẵn
+
+CÂU NHỚ:
+"Entity là hồ sơ, Repository là quầy tiếp nhận"

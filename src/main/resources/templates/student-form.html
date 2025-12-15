@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>THÔNG TIN HỌC SINH</h2>
+
+<form action="/students/save" method="post"
+      th:object="${student}">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    Tên:
+    <input type="text" th:field="*{name}"/> <br><br>
+
+    Tuổi:
+    <input type="number" th:field="*{age}"/> <br><br>
+
+    <button type="submit">💾 Lưu</button>
+</form>
+
+<a href="/students">⬅ Quay lại</a>
+</body>
+</html>
