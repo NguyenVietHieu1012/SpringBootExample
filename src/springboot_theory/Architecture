@@ -1,0 +1,11 @@
+Client (HTTP request)
+   ↓
+DispatcherServlet
+   ↓
+Controller  (@Controller / @RestController)
+   ↓
+Service     (@Service) — logic nghiệp vụ
+   ↓
+Repository  (@Repository) — tương tác DB
+   ↓
+Database
