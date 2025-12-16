@@ -1,0 +1,192 @@
+# RESTFUL API DESIGN
+
+1. Status Code
+2. Pagination & Filtering
+3. Idempotency
+4. Versioning
+
+---
+
+1. STATUS CODE
+
+---
+
+Status Code là mã HTTP mà server trả về để thông báo kết quả xử lý request.
+Việc trả status code đúng giúp client hiểu rõ request thành công hay thất bại.
+
+1.1 Nhóm Status Code chính
+
+* 2xx: Thành công
+* 4xx: Lỗi phía client
+* 5xx: Lỗi phía server
+
+1.2 Các Status Code quan trọng
+
+200 OK
+
+* Request thành công
+* Thường dùng cho GET, PUT
+
+201 Created
+
+* Tạo mới tài nguyên thành công
+* Dùng cho POST
+
+204 No Content
+
+* Thành công nhưng không trả body
+* Thường dùng cho DELETE
+
+400 Bad Request
+
+* Request sai dữ liệu
+
+404 Not Found
+
+* Không tìm thấy tài nguyên
+
+500 Internal Server Error
+
+* Lỗi phía server
+
+1.3 Ví dụ Spring Boot
+
+@PostMapping("/students")
+public ResponseEntity<Student> create(@RequestBody Student student) {
+    Student saved = studentRepository.save(student);
+    return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+}
+
+---
+
+2. PAGINATION & FILTERING
+
+---
+
+2.1 Pagination là gì?
+Pagination là cơ chế chia dữ liệu thành nhiều trang nhỏ để:
+
+* Tránh load quá nhiều dữ liệu
+* Tăng hiệu năng
+
+Ví dụ request:
+GET /students?page=0&size=5
+
+2.2 Response Pagination mẫu
+
+{
+    "content": [...],
+    "totalElements": 100,
+    "totalPages": 20,
+    "number": 0,
+    "size": 5
+}
+
+2.3 Filtering là gì?
+Filtering là lọc dữ liệu dựa trên điều kiện thông qua query parameter.
+
+Ví dụ:
+GET /students?name=an&age=18
+
+2.4 Pagination + Filtering
+
+GET /students?name=an&age=18&page=0&size=5
+
+2.5 Controller ví dụ
+
+    @GetMapping("/students")
+    public Page<Student> search(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) Integer age,
+        Pageable pageable) {
+            return studentService.search(name, age, pageable);
+        }
+
+---
+
+3. IDEMPOTENCY
+
+---
+
+3.1 Idempotency là gì?
+Idempotent nghĩa là gọi API nhiều lần nhưng kết quả vẫn không thay đổi.
+
+3.2 Idempotency của các HTTP Method
+
+GET     : Idempotent
+PUT     : Idempotent
+DELETE  : Idempotent
+POST    : Không idempotent
+
+3.3 Ví dụ
+
+POST /students
+
+* Gọi 2 lần → tạo 2 bản ghi (không idempotent)
+
+PUT /students/1
+
+* Gọi nhiều lần → vẫn chỉ update student id=1
+
+DELETE /students/1
+
+* Gọi nhiều lần → student vẫn bị xóa
+
+3.4 Vì sao Idempotency quan trọng?
+
+* Hỗ trợ retry khi network lỗi
+* Tránh tạo dữ liệu trùng
+* Quan trọng trong payment system
+
+---
+
+4. VERSIONING
+
+---
+
+4.1 Vì sao cần Versioning?
+
+* Backend thay đổi nhưng không phá client cũ
+* Dễ bảo trì API lâu dài
+
+4.2 Các cách Versioning phổ biến
+
+Cách 1: Version trong URL (phổ biến nhất)
+/api/v1/students
+/api/v2/students
+
+Cách 2: Version trong Header
+X-API-VERSION: 1
+
+Cách 3: Media Type (ít dùng)
+Accept: application/vnd.company.v1+json
+
+4.3 Ví dụ Versioning
+
+v1 response:
+{
+    "id": 1,
+    "name": "An"
+}
+
+v2 response:
+{
+    "id": 1,
+    "name": "An",
+    "age": 20
+}
+
+---
+
+5. TÓM TẮT NHANH
+
+---
+
+Status Code   → Thông báo kết quả request
+Pagination    → Chia dữ liệu thành trang
+Filtering     → Lọc dữ liệu bằng query param
+Idempotency   → Gọi nhiều lần vẫn an toàn
+Versioning    → Nâng cấp API không phá client
+
+====================================
+

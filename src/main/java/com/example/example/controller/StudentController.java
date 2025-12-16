@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import com.example.example.entity.Student;
 import com.example.example.repository.StudentRepository;
@@ -171,6 +173,14 @@ public class StudentController {
 
         return studentRepository.findAll(spec, pageable);
     }
+
+    //------------------------------------HTTP Status Codes-----------------------------------------
+    @PostMapping("/students")
+    public ResponseEntity<Student> create(@RequestBody Student student) {
+        Student saved = studentRepository.save(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    }
+
 }
 
 
