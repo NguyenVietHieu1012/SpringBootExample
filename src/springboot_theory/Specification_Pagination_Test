@@ -1,0 +1,8 @@
+Pagination
+http://localhost:8081/students/page?page=0&size=5
+http://localhost:8081/students/page?page=1&size=5
+
+Specfication
+http://localhost:8081/students/search?name=an
+http://localhost:8081/students/search?age=20
+http://localhost:8081/students/search?name=an&age=24

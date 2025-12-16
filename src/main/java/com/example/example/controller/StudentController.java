@@ -1,5 +1,10 @@
 package com.example.example.controller;
 
+import com.example.example.specification.StudentSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.Model;
 import com.example.example.entity.Student;
 import com.example.example.repository.StudentRepository;
@@ -138,6 +143,34 @@ public class StudentController {
         return studentRepository.findTop3Oldest();
     }
 
+    //------------------------------------Demo Pagination-----------------------------------------
+    @GetMapping("/page")
+    @ResponseBody
+    public Page<Student> paging(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+        return studentRepository.findAll(pageable);
+    }
+
+    //------------------------------------Demo Specification-----------------------------------------
+    @GetMapping("/search")
+    @ResponseBody
+    public Page<Student> search(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer age,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Specification<Student> spec =
+                Specification.where(StudentSpecification.hasName(name))
+                        .and(StudentSpecification.ageGreaterThan(age));
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return studentRepository.findAll(spec, pageable);
+    }
 }
 
 

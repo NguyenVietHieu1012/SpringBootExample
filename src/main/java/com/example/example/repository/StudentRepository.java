@@ -2,14 +2,19 @@ package com.example.example.repository;
 
 import com.example.example.entity.Student;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 
-public interface StudentRepository extends JpaRepository<Student, Long> {
+public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpecificationExecutor<Student> {
+
+    // Bắt buộc có JpaSpecificationExecutor<Student> để sử dụng Specification
 
     //---------------------------------Query methods------------------------------------------------
 
@@ -85,4 +90,12 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     // LIMIT
     @Query(value = "SELECT * FROM student ORDER BY age DESC LIMIT 3", nativeQuery = true)
     List<Student> findTop3Oldest();
+
+    //--------------------------------------Pagination-----------------------------------------
+
+    // Phân trang tất cả student
+    Page<Student> findAll(Pageable pageable);
+
+    // Phân trang + điều kiện
+    Page<Student> findByAgeGreaterThan(int age, Pageable pageable);
 }
