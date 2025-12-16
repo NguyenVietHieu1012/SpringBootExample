@@ -125,6 +125,19 @@ public class StudentController {
         return studentRepository.findByAgeLessThanEqual(age);
     }
 
+    //--------------------- Demo JPQL và Native query -----------------------
+    @GetMapping("/jpql/age/{age}")
+    @ResponseBody
+    public List<Student> jpqlAge(@PathVariable int age) {
+        return studentRepository.findOlderThan(age);
+    }
+
+    @GetMapping("/native/top3")
+    @ResponseBody
+    public List<Student> nativeTop3() {
+        return studentRepository.findTop3Oldest();
+    }
+
 }
 
 

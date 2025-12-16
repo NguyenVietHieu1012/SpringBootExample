@@ -1,0 +1,165 @@
+# JPQL & NATIVE QUERY TRONG SPRING BOOT (SPRING DATA JPA)
+
+1. TỔNG QUAN
+
+---
+
+Trong Spring Data JPA, ngoài Query Method (tự sinh query từ tên hàm), còn có:
+
+* JPQL (Java Persistence Query Language)
+* Native Query (SQL thuần)
+
+Cả hai đều được viết bằng annotation @Query trong Repository.
+
+---
+
+2. JPQL LÀ GÌ?
+
+---
+
+JPQL (Java Persistence Query Language) là ngôn ngữ truy vấn dựa trên:
+
+* Entity (class Java)
+* Field (thuộc tính trong class)
+
+JPQL KHÔNG truy vấn trực tiếp table và column trong database.
+
+Ưu điểm:
+
+* Độc lập hệ quản trị CSDL (MySQL, PostgreSQL, Oracle...)
+* Dễ bảo trì khi đổi tên bảng/cột
+
+---
+
+3. VÍ DỤ JPQL
+
+---
+
+Entity:
+
+@Entity
+public class Student {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String name;
+    private int age;
+}
+
+Repository:
+
+public interface StudentRepository extends JpaRepository<Student, Long> {
+
+    // Lấy tất cả student
+    @Query("SELECT s FROM Student s")
+    List<Student> findAllStudents();
+
+    // Tìm theo name
+    @Query("SELECT s FROM Student s WHERE s.name = :name")
+    List<Student> findByNameJPQL(@Param("name") String name);
+
+    // Tuổi lớn hơn
+    @Query("SELECT s FROM Student s WHERE s.age > :age")
+    List<Student> findOlderThan(@Param("age") int age);
+
+    // Tìm name chứa keyword (không phân biệt hoa thường)
+    @Query("SELECT s FROM Student s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Student> searchByName(@Param("keyword") String keyword);
+
+}
+
+Giải thích:
+
+* Student: tên Entity
+* s.name, s.age: field trong class
+* :name, :age: named parameter
+
+---
+
+4. NATIVE QUERY LÀ GÌ?
+
+---
+
+Native Query là cách viết SQL thuần trong Spring Data JPA.
+
+Đặc điểm:
+
+* Truy vấn trực tiếp table và column
+* Phụ thuộc hệ quản trị CSDL
+* Dùng được các function đặc thù của DB
+
+---
+
+5. VÍ DỤ NATIVE QUERY
+
+---
+
+Repository:
+
+public interface StudentRepository extends JpaRepository<Student, Long> {
+
+    // Lấy tất cả
+    @Query(value = "SELECT * FROM student", nativeQuery = true)
+    List<Student> findAllNative();
+
+    // Tìm theo name
+    @Query(value = "SELECT * FROM student WHERE name = :name", nativeQuery = true)
+    List<Student> findByNameNative(@Param("name") String name);
+
+    // Tuổi >=
+    @Query(value = "SELECT * FROM student WHERE age >= :age", nativeQuery = true)
+    List<Student> findAgeGreaterOrEqual(@Param("age") int age);
+
+    // Top 3 student lớn tuổi nhất (MySQL)
+    @Query(value = "SELECT * FROM student ORDER BY age DESC LIMIT 3", nativeQuery = true)
+    List<Student> findTop3Oldest();
+
+}
+
+Giải thích:
+
+* student: tên bảng trong DB
+* name, age: tên cột
+* LIMIT: cú pháp riêng của MySQL
+
+---
+
+6. SO SÁNH JPQL VÀ NATIVE QUERY
+
+---
+
+JPQL:
+
+* Truy vấn trên Entity
+* Độc lập DB
+* Dễ bảo trì
+* Không hỗ trợ tốt function DB đặc thù
+
+Native Query:
+
+* Truy vấn trên Table
+* Phụ thuộc DB
+* Mạnh khi query phức tạp
+* Khó bảo trì khi đổi DB
+
+---
+
+7. KHI NÀO DÙNG CÁI NÀO?
+
+---
+
+Nên dùng JPQL khi:
+
+* CRUD thông thường
+* Query vừa và đơn giản
+* Muốn code portable
+
+Nên dùng Native Query khi:
+
+* Query phức tạp
+* Cần function DB (LIMIT, JSON, FULLTEXT, WINDOW FUNCTION)
+* Tối ưu performance
+
+---
+
+
