@@ -1,0 +1,194 @@
+# TỔNG HỢP QUERY METHODS TRONG SPRING DATA JPA
+
+1. QUERY METHOD LÀ GÌ?
+
+---
+
+Query Method là cách Spring Data JPA tự động sinh câu truy vấn SQL/JPQL dựa vào tên phương thức trong Repository.
+Lập trình viên KHÔNG cần viết SQL hay @Query, chỉ cần đặt tên hàm đúng quy ước.
+
+Ví dụ: findByName → Spring tự hiểu là SELECT * FROM user WHERE name = ?
+
+2. VÍ DỤ ENTITY VÀ REPOSITORY
+
+---
+
+Entity:
+
+@Entity
+public class User {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String name;
+    private int age;
+    private String email;
+    private boolean active;
+}
+
+Repository:
+
+public interface UserRepository extends JpaRepository<User, Long> {}
+
+3. CẤU TRÚC CHUNG CỦA QUERY METHOD
+
+---
+
+<Prefix>By<Field><Condition><Operator>
+
+Ví dụ:
+
+* findByName
+* findByAgeGreaterThan
+* findByNameAndAge
+
+4. PREFIX (TỪ KHÓA ĐẦU CÂU)
+
+---
+
+findBy    : tìm dữ liệu
+getBy     : giống findBy
+readBy    : giống findBy
+queryBy   : giống findBy
+countBy   : đếm số bản ghi
+existsBy  : kiểm tra tồn tại
+deleteBy  : xóa dữ liệu
+
+Ví dụ:
+List<User> findByName(String name);
+long countByActive(boolean active);
+boolean existsByEmail(String email);
+void deleteById(Long id);
+
+5. CÁC TOÁN TỬ SO SÁNH (CONDITION)
+
+---
+
+5.1 So sánh cơ bản
+Equals / Is      : bằng
+Not              : khác
+IsNull           : NULL
+IsNotNull        : NOT NULL
+
+Ví dụ:
+findByName(String name);
+findByNameNot(String name);
+findByEmailIsNull();
+
+5.2 So sánh số
+GreaterThan          : >
+GreaterThanEqual     : >=
+LessThan             : <
+LessThanEqual        : <=
+Between              : trong khoảng
+
+Ví dụ:
+findByAgeGreaterThan(int age);
+findByAgeBetween(int min, int max);
+
+5.3 So sánh chuỗi (String)
+Like            : LIKE
+Containing      : chứa
+StartingWith    : bắt đầu bằng
+EndingWith      : kết thúc bằng
+IgnoreCase      : không phân biệt hoa thường
+
+Ví dụ:
+findByNameContaining(String keyword);
+findByEmailEndingWith("@gmail.com");
+findByNameIgnoreCase(String name);
+
+5.4 Boolean
+True  : true
+False : false
+
+Ví dụ:
+findByActiveTrue();
+findByActiveFalse();
+
+6. KẾT HỢP ĐIỀU KIỆN
+
+---
+
+And : AND
+Or  : OR
+
+Ví dụ:
+findByNameAndAge(String name, int age);
+findByNameOrEmail(String name, String email);
+
+7. SẮP XẾP (ORDER BY)
+
+---
+
+Asc  : tăng dần
+Desc : giảm dần
+
+Ví dụ:
+findByAgeOrderByNameAsc(int age);
+findByActiveOrderByAgeDesc();
+
+8. GIỚI HẠN KẾT QUẢ
+
+---
+
+Top / First : lấy N bản ghi đầu tiên
+
+Ví dụ:
+findTop3ByOrderByAgeDesc();
+findFirstByName(String name);
+
+9. IN / NOT IN
+
+---
+
+Ví dụ:
+findByIdIn(List<Long> ids);
+findByEmailNotIn(List<String> emails);
+
+10. DATE / TIME
+
+---
+
+Before : trước
+After  : sau
+
+Ví dụ:
+findByCreatedDateAfter(LocalDate date);
+findByCreatedDateBefore(LocalDate date);
+
+11. PHÂN TRANG (PAGING)
+
+---
+
+Page<User> findByActive(boolean active, Pageable pageable);
+
+Ví dụ sử dụng:
+Pageable pageable = PageRequest.of(0, 10, Sort.by("age").descending());
+
+12. KHI NÀO KHÔNG NÊN DÙNG QUERY METHOD?
+
+---
+
+* Join nhiều bảng phức tạp
+* Subquery
+* Điều kiện động phức tạp
+
+Giải pháp thay thế:
+
+* @Query
+* Specification
+* QueryDSL
+
+13. CHEAT SHEET NHANH
+
+---
+
+findByName
+findByAgeGreaterThan
+findByNameAndAge
+findByEmailContainingIgnoreCase
+findTop5ByOrderByAgeDesc
+existsByEmail
+countByActive
+

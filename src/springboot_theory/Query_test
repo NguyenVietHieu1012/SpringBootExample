@@ -1,0 +1,14 @@
+# tìm chứa chuỗi (case-insensitive)
+curl http://localhost:8080/students/search/contains/an
+
+# top 3 oldest
+curl http://localhost:8080/students/search/top3/oldest
+
+# check exists
+curl http://localhost:8080/students/search/exists/An
+
+# tìm theo ids
+curl "http://localhost:8080/students/search/ids?ids=1,2,3"
+
+# tìm theo khoảng tuổi
+curl "http://localhost:8080/students/search/between?min=18&max=25"

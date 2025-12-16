@@ -5,11 +5,12 @@ import com.example.example.entity.Student;
 import com.example.example.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/students")
@@ -51,6 +52,79 @@ public class StudentController {
     public String ping() {
         return "OK";
     }
+
+    //--------------------- Demo Query Methods -----------------------
+
+    //find by name
+    @GetMapping("/search/name/{name}")
+    @ResponseBody
+    public List<Student> findByName(@PathVariable String name){
+        return studentRepository.findByName(name);
+    }
+
+    //findByAgeGreaterThan
+    @GetMapping("/search/age/greater/{age}")
+    @ResponseBody
+    public List<Student> findByAgeGreaterThan(@PathVariable int age){
+        return studentRepository.findByAgeGreaterThan(age);
+    }
+
+    // findByNameContainingIgnoreCase
+    @GetMapping("/search/contains/{keyword}")
+    @ResponseBody
+    public List<Student> findByNameContaining(@PathVariable String keyword) {
+        return studentRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
+    // findTop3ByOrderByAgeDesc
+    @GetMapping("/search/top3/oldest")
+    @ResponseBody
+    public List<Student> top3Oldest() {
+        return studentRepository.findTop3ByOrderByAgeDesc();
+    }
+
+    // existsByName
+    @GetMapping("/search/exists/{name}")
+    @ResponseBody
+    public boolean existsByName(@PathVariable String name){
+        return studentRepository.existsByName(name);
+    }
+
+    // countByAgeGreaterThanEqual
+    @GetMapping("/search/count/age/{age}")
+    @ResponseBody
+    public long countByAgeGreaterOrEqual(@PathVariable int age){
+        return studentRepository.countByAgeGreaterThanEqual(age);
+    }
+
+    // findByAgeBetween? min=18 & max=25
+    @GetMapping("/search/between")
+    @ResponseBody
+    public List<Student> findByAgeBetween(@RequestParam int min, @RequestParam int max){
+        return studentRepository.findByAgeBetween(min, max);
+    }
+
+    // findByAgeOrderByNameAsc
+    @GetMapping("/search/age/sort")
+    @ResponseBody
+    public List<Student> findByAgeOrderByNameAsc(@RequestParam int age){
+        return studentRepository.findByAgeOrderByNameAsc(age);
+    }
+
+    // findByNameStartingWith
+    @GetMapping("/search/startwith/{prefix}")
+    @ResponseBody
+    public List<Student> findByNameStartingWith(@PathVariable String prefix) {
+        return studentRepository.findByNameStartingWith(prefix);
+    }
+
+    // findByAgeLessThanEqual
+    @GetMapping("/search/age/lessorequal/{age}")
+    @ResponseBody
+    public List<Student> findByAgeLessThanEqual(@PathVariable int age){
+        return studentRepository.findByAgeLessThanEqual(age);
+    }
+
 }
 
 
