@@ -1,0 +1,104 @@
+GIẢI THÍCH @ResponseBody TRONG SPRING BOOT
+
+---
+
+1. @ResponseBody LÀ GÌ?
+
+---
+
+@ResponseBody có nhiệm vụ trả dữ liệu trực tiếp về client (browser / Postman / curl)
+ở dạng JSON (hoặc XML), thay vì trả về tên view (HTML).
+
+---
+
+2. TRƯỜNG HỢP CÓ @ResponseBody
+
+---
+
+    @GetMapping("/search/name/{name}")
+    @ResponseBody
+    public List<Student> findByName(@PathVariable String name){
+        return studentRepository.findByName(name);
+    }
+
+Luồng xử lý:
+
+* Client gọi API: GET /search/name/An
+* Method trả về: List<Student>
+* @ResponseBody báo cho Spring:
+  "Không tìm file HTML, hãy convert object Java thành JSON và trả về response body"
+
+Ví dụ response JSON:
+[
+    {
+        "id": 1,
+        "name": "An",
+        "age": 20
+    },
+    {
+        "id": 3,
+        "name": "An",
+        "age": 22
+    }
+]
+
+Spring sử dụng HttpMessageConverter (thường là Jackson)
+để chuyển object Student sang JSON.
+
+---
+
+3. TRƯỜNG HỢP KHÔNG CÓ @ResponseBody
+
+---
+
+    @GetMapping("/search/name/{name}")
+    public List<Student> findByName(@PathVariable String name){
+        return studentRepository.findByName(name);
+    }
+
+Spring sẽ hiểu giá trị return là TÊN VIEW (HTML).
+Nó sẽ cố tìm file trong thư mục templates.
+
+Kết quả thường gặp:
+
+* Whitelabel Error Page
+* Internal Server Error
+
+---
+
+4. @ResponseBody VS @RestController
+
+---
+
+Nếu class dùng:
+
+    @RestController
+    public class StudentController {}
+
+thì KHÔNG cần viết @ResponseBody cho từng method.
+
+Vì:
+@RestController = @Controller + @ResponseBody
+
+Tất cả method trong @RestController mặc định trả JSON.
+
+---
+
+5. KHI NÀO CẦN DÙNG @ResponseBody?
+
+---
+
+@Controller (trả HTML)        : CẦN @ResponseBody nếu muốn trả JSON
+@RestController (REST API)    : KHÔNG CẦN
+Trả dữ liệu JSON / XML        : CẦN
+Trả tên file HTML (View)      : KHÔNG CẦN
+
+---
+
+6. TÓM TẮT NGẮN GỌN
+
+---
+
+@ResponseBody = Trả dữ liệu, KHÔNG trả view
+
+Dùng khi viết REST API trong Spring Boot.
