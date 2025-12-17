@@ -1,0 +1,159 @@
+GIẢI THÍCH @RequestParam TRONG SPRING BOOT
+
+==================================================
+
+1. @RequestParam LÀ GÌ?
+
+@RequestParam là annotation dùng để LẤY DỮ LIỆU
+TỪ QUERY STRING (tham số trên URL) và gán vào biến
+trong method của Controller.
+
+Nó thường dùng cho:
+
+* Tìm kiếm (search)
+* Lọc dữ liệu (filter)
+* Phân trang (pagination)
+* Tham số tùy chọn (optional)
+
+Ví dụ URL:
+/students?name=An&age=20
+
+→ name và age là Request Param
+
+===============
+2. VÍ DỤ CƠ BẢN
+===============
+
+    @GetMapping("/students")
+    @ResponseBody
+    public List<Student> findStudents(@RequestParam String name, @RequestParam int age) {
+        return studentRepository.findByNameAndAge(name, age);
+    }
+
+Giải thích:
+
+* name, age được lấy từ URL query string
+* Không nằm trong path như @PathVariable
+
+============================
+3. LUỒNG XỬ LÝ @RequestParam
+============================
+
+Ví dụ client gọi:
+GET /students?name=An&age=20
+
+---
+
+## LUỒNG CHI TIẾT:
+
+1. Client gửi request:
+   GET /students?name=An&age=20
+
+2. DispatcherServlet nhận request
+
+3. Spring tìm Controller có mapping:
+   /students
+
+4. Spring đọc query string:
+
+   * name = An
+   * age = 20
+
+5. Gán giá trị:
+   name = "An"
+   age = 20 (convert String → int)
+
+6. Gọi method:
+   findStudents("An", 20)
+
+7. Method xử lý logic:
+
+   * Gọi Repository
+   * Query database theo điều kiện
+
+8. Method return List<Student>
+
+9. @ResponseBody / @RestController:
+
+   * Convert List<Student> → JSON
+
+10. Trả response về client
+
+---
+
+## RESPONSE JSON (ví dụ):
+
+[
+    {
+        "id": 1,
+        "name": "An",
+        "age": 20
+    }
+]
+
+==========================================
+4. @RequestParam OPTIONAL (KHÔNG BẮT BUỘC)
+==========================================
+
+    @GetMapping("/students/search")
+    public List<Student> searchStudents(@RequestParam(required = false) String name, @RequestParam(required = false) Integer age) {
+        return studentRepository.search(name, age);
+    }
+
+Ví dụ URL:
+/students/search
+/students/search?name=An
+/students/search?age=20
+
+====================================
+5. @RequestParam CÓ GIÁ TRỊ MẶC ĐỊNH
+====================================
+
+    @GetMapping("/students/page")
+    public List<Student> getStudents(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return studentRepository.findAll(page, size);
+    }
+
+Ví dụ URL:
+/students/page?page=1&size=20
+
+=================================
+6. @RequestParam VS @PathVariable
+=================================
+
+@PathVariable:
+
+* Dữ liệu nằm trong path
+* Bắt buộc
+* Định danh tài nguyên
+
+Ví dụ:
+/students/5
+
+@RequestParam:
+
+* Dữ liệu nằm sau dấu ?
+* Có thể optional
+* Phục vụ search, filter, pagination
+
+Ví dụ:
+/students?name=An
+
+=================
+7. LỖI THƯỜNG GẶP
+=================
+
+1. Thiếu RequestParam trên URL
+2. Sai kiểu dữ liệu (String → int)
+3. Quên required=false khi param optional
+4. Gõ sai tên tham số
+
+=================
+8. TÓM TẮT DỄ NHỚ
+=================
+
+@RequestParam = LẤY DỮ LIỆU TỪ QUERY STRING
+
+Luồng xử lý:
+Client → DispatcherServlet → Controller (@RequestParam) → Service → Repository → DB → JSON → Client
+
