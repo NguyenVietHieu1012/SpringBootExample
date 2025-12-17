@@ -1,0 +1,145 @@
+GIẢI THÍCH @PathVariable TRONG SPRING BOOT
+
+1. @PathVariable LÀ GÌ?
+
+@PathVariable là annotation dùng để LẤY GIÁ TRỊ ĐỘNG
+trực tiếp từ URL và gán vào biến trong method của Controller.
+
+Nó thường đi kèm với @GetMapping, @PostMapping, @PutMapping, @DeleteMapping.
+
+Ví dụ URL:
+/students/5
+
+→ số 5 chính là Path Variable
+
+===============
+2. VÍ DỤ CƠ BẢN
+===============
+
+    @GetMapping("/students/{id}")
+    @ResponseBody
+    public Student getStudentById(@PathVariable Long id) {
+        return studentRepository.findById(id).orElse(null);
+    }
+
+Giải thích:
+
+* {id}        : biến động trong URL
+* @PathVariable Long id : nhận giá trị từ URL
+
+============================
+3. LUỒNG XỬ LÝ @PathVariable
+============================
+
+Ví dụ client gọi:
+GET /students/5
+
+---
+
+## LUỒNG CHI TIẾT:
+
+1. Client gửi request:
+   GET /students/5
+
+2. DispatcherServlet nhận request
+
+3. Spring tìm Controller có mapping:
+   /students/{id}
+
+4. Spring phân tích URL:
+
+   * {id} = 5
+
+5. Gán giá trị:
+   id = 5 (convert String → Long)
+
+6. Gọi method:
+   getStudentById(5)
+
+7. Method xử lý logic:
+
+   * Gọi Repository
+   * Truy vấn database với id = 5
+
+8. Method return object Student
+
+9. @ResponseBody / @RestController:
+
+   * Convert Student → JSON
+
+10. Trả response về client
+
+---
+
+## RESPONSE JSON:
+
+{
+    "id": 5,
+    "name": "An",
+    "age": 20
+}
+
+=================================
+4. @PathVariable VS @RequestParam
+=================================
+
+@PathVariable:
+
+* Lấy dữ liệu từ URL path
+* Bắt buộc phải có
+* Dùng cho định danh tài nguyên (id)
+
+Ví dụ:
+/students/5
+
+@RequestParam:
+
+* Lấy dữ liệu từ query string
+* Có thể optional
+
+Ví dụ:
+/students?id=5
+
+================================
+5. ĐẶT TÊN KHÁC GIỮA URL VÀ BIẾN
+================================
+
+@GetMapping("/students/{studentId}")
+public Student getStudent(@PathVariable("studentId") Long id) {
+    return studentRepository.findById(id).orElse(null);
+}
+
+studentId (URL) → id (Java)
+
+======================
+6. NHIỀU @PathVariable
+======================
+
+@GetMapping("/classes/{classId}/students/{studentId}")
+public Student getStudentInClass(@PathVariable Long classId, @PathVariable Long studentId) {
+    return studentRepository.findById(studentId).orElse(null);
+}
+
+URL:
+/classes/2/students/10
+
+=================
+7. LỖI THƯỜNG GẶP
+=================
+
+1. Thiếu @PathVariable
+2. Sai tên biến trong URL
+3. Sai kiểu dữ liệu (String → Long)
+4. URL không match mapping
+
+=================
+8. TÓM TẮT DỄ NHỚ
+=================
+
+@PathVariable = LẤY DỮ LIỆU TỪ URL PATH
+
+Luồng xử lý:
+Client → DispatcherServlet → Controller (@PathVariable)
+→ Service → Repository → DB → JSON → Client
+
+

@@ -1,0 +1,176 @@
+GIẢI THÍCH @GetMapping VÀ @PostMapping TRONG SPRING BOOT
+
+==================================================
+
+1. TỔNG QUAN
+
+@GetMapping và @PostMapping là các annotation dùng trong Spring Boot để ánh xạ (mapping) HTTP request từ client đến method trong Controller.
+
+* @GetMapping  → xử lý HTTP GET (lấy dữ liệu)
+* @PostMapping → xử lý HTTP POST (gửi / tạo dữ liệu)
+
+Cả hai đều là dạng rút gọn của @RequestMapping.
+
+---
+
+@GetMapping  = @RequestMapping(method = RequestMethod.GET)
+@PostMapping = @RequestMapping(method = RequestMethod.POST)
+
+=====================
+2. @GetMapping LÀ GÌ?
+=====================
+
+@GetMapping dùng khi client muốn LẤY DỮ LIỆU từ server.
+
+Ví dụ:
+
+    @GetMapping("/students/{id}")
+    @ResponseBody
+    public Student getStudentById(@PathVariable Long id) {
+        return studentRepository.findById(id).orElse(null);
+    }
+
+---
+
+## 2.1 LUỒNG XỬ LÝ @GetMapping
+
+1. Client gửi request:
+   GET /students/1
+
+2. DispatcherServlet nhận request
+
+3. Spring tìm Controller có @GetMapping("/students/{id}")
+
+4. Gán giá trị:
+   id = 1 (từ @PathVariable)
+
+5. Gọi method getStudentById(1)
+
+6. Method xử lý logic:
+
+   * Gọi Repository
+   * Lấy dữ liệu từ database
+
+7. Return object Student
+
+8. @ResponseBody / @RestController:
+
+   * Convert Student → JSON
+
+9. Trả response về client
+
+Ví dụ JSON:
+
+{
+    "id": 1,
+    "name": "An",
+    "age": 20
+}
+
+---
+
+## 2.2 ĐẶC ĐIỂM @GetMapping
+
+* Dữ liệu gửi qua URL (PathVariable, RequestParam)
+* Không dùng để gửi dữ liệu nhạy cảm
+* Có thể cache
+* Gọi nhiều lần không làm thay đổi dữ liệu (idempotent)
+
+======================
+3. @PostMapping LÀ GÌ?
+======================
+
+@PostMapping dùng khi client muốn GỬI DỮ LIỆU lên server
+(thường để tạo mới hoặc xử lý dữ liệu).
+
+Ví dụ:
+
+    @PostMapping("/students")
+    @ResponseBody
+    public Student createStudent(@RequestBody Student student) {
+        return studentRepository.save(student);
+    }
+
+---
+
+## 3.1 LUỒNG XỬ LÝ @PostMapping
+
+1. Client gửi request:
+   POST /students
+   Body (JSON):
+   {
+       "name": "Mai",
+       "age": 21
+   }
+
+2. DispatcherServlet nhận request
+
+3. Spring tìm Controller có @PostMapping("/students")
+
+4. @RequestBody:
+
+   * Đọc JSON từ body
+   * Convert JSON → object Student
+
+5. Gọi method createStudent(student)
+
+6. Method xử lý logic:
+
+   * Validate dữ liệu (nếu có)
+   * Lưu vào database
+
+7. Return Student đã lưu
+
+8. Convert Student → JSON
+
+9. Trả response về client
+
+Ví dụ JSON:
+
+{
+    "id": 5,
+    "name": "Mai",
+    "age": 21
+}
+
+---
+
+## 3.2 ĐẶC ĐIỂM @PostMapping
+
+* Dữ liệu gửi trong body
+* Không hiển thị trên URL
+* Không cache
+* Mỗi lần gọi có thể tạo dữ liệu mới (NOT idempotent)
+
+======================================
+4. SO SÁNH @GetMapping VÀ @PostMapping
+======================================
+
+@GetMapping:
+
+* Mục đích: Lấy dữ liệu
+* HTTP Method: GET
+* Dữ liệu gửi: URL
+* An toàn: Cao
+* Cache: Có thể
+
+@PostMapping:
+
+* Mục đích: Gửi / tạo dữ liệu
+* HTTP Method: POST
+* Dữ liệu gửi: Body
+* An toàn: Cao hơn GET
+* Cache: Không
+
+=================
+5. TÓM TẮT DỄ NHỚ
+=================
+
+GET  → LẤY DỮ LIỆU → @GetMapping
+POST → GỬI DỮ LIỆU → @PostMapping
+
+Luồng chung:
+Client → DispatcherServlet → Controller → Service → Repository → DB
+→ Convert JSON → Response
+
+

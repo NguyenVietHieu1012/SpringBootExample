@@ -71,7 +71,7 @@ public class StudentController {
 
     //findByAgeGreaterThan
     @GetMapping("/search/age/greater/{age}")
-    @ResponseBody
+    @ResponseBody // Trả về JSON output
     public List<Student> findByAgeGreaterThan(@PathVariable int age){
         return studentRepository.findByAgeGreaterThan(age);
     }
