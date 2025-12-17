@@ -1,0 +1,194 @@
+GIẢI THÍCH @PutMapping & @DeleteMapping TRONG SPRING BOOT
+
+==================================================
+
+1. TỔNG QUAN
+
+@PutMapping và @DeleteMapping dùng để xử lý các HTTP request
+liên quan đến CẬP NHẬT và XÓA dữ liệu trong REST API.
+
+* @PutMapping    → UPDATE (cập nhật dữ liệu)
+* @DeleteMapping → DELETE (xóa dữ liệu)
+
+Cả hai đều là dạng rút gọn của @RequestMapping.
+
+---
+
+@PutMapping    = @RequestMapping(method = RequestMethod.PUT)
+@DeleteMapping = @RequestMapping(method = RequestMethod.DELETE)
+---------------------------------------------------------------
+
+=====================
+2. @PutMapping LÀ GÌ?
+=====================
+
+@PutMapping dùng khi client muốn CẬP NHẬT TOÀN BỘ
+hoặc thông tin chính của một tài nguyên đã tồn tại.
+
+---
+
+## 2.1 VÍ DỤ @PutMapping
+
+    @PutMapping("/students/{id}")
+    @ResponseBody
+    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
+        student.setId(id);
+        return studentRepository.save(student);
+    }
+
+---
+
+## 2.2 LUỒNG XỬ LÝ @PutMapping
+
+Ví dụ client gọi:
+PUT /students/5
+Body (JSON):
+{
+    "name": "An Updated",
+    "age": 21
+}
+
+LUỒNG CHI TIẾT:
+
+1. Client gửi request PUT /students/5
+
+2. DispatcherServlet nhận request
+
+3. Spring tìm Controller có mapping:
+   /students/{id} với method PUT
+
+4. Xử lý @PathVariable:
+   id = 5
+
+5. Xử lý @RequestBody:
+
+   * Đọc JSON từ body
+   * Convert JSON → Student object
+
+6. Gọi method:
+   updateStudent(5, student)
+
+7. Method xử lý logic:
+
+   * Gán id vào object
+   * Kiểm tra tồn tại (nếu có)
+   * Lưu dữ liệu cập nhật vào database
+
+8. Method return Student đã cập nhật
+
+9. Convert Student → JSON
+
+10. Trả response về client
+
+---
+
+## ĐẶC ĐIỂM @PutMapping
+
+* Dùng cho UPDATE
+* Gửi dữ liệu qua body
+* Idempotent (gọi nhiều lần kết quả giống nhau)
+
+========================
+3. @DeleteMapping LÀ GÌ?
+========================
+
+@DeleteMapping dùng khi client muốn XÓA
+một tài nguyên khỏi hệ thống.
+
+---
+
+## 3.1 VÍ DỤ @DeleteMapping
+
+    @DeleteMapping("/students/{id}")
+    @ResponseBody
+    public String deleteStudent(@PathVariable Long id) {
+        studentRepository.deleteById(id);
+        return "Deleted student with id = " + id;
+    }
+
+---
+
+## 3.2 LUỒNG XỬ LÝ @DeleteMapping
+
+Ví dụ client gọi:
+DELETE /students/5
+
+LUỒNG CHI TIẾT:
+
+1. Client gửi request DELETE /students/5
+
+2. DispatcherServlet nhận request
+
+3. Spring tìm Controller có mapping:
+   /students/{id} với method DELETE
+
+4. Xử lý @PathVariable:
+   id = 5
+
+5. Gọi method:
+   deleteStudent(5)
+
+6. Method xử lý logic:
+
+   * Kiểm tra tồn tại (nếu có)
+   * Xóa dữ liệu khỏi database
+
+7. Method return message hoặc status
+
+8. Trả response về client
+
+---
+
+## ĐẶC ĐIỂM @DeleteMapping
+
+* Dùng cho DELETE
+* Không cần body
+* Idempotent (xóa rồi gọi lại vẫn cùng kết quả)
+
+=======================
+4. SO SÁNH PUT & DELETE
+=======================
+
+@PutMapping:
+
+* Mục đích: Cập nhật dữ liệu
+* Có body: Có
+* Thay đổi dữ liệu: Có
+* Idempotent: Có
+
+@DeleteMapping:
+
+* Mục đích: Xóa dữ liệu
+* Có body: Không
+* Thay đổi dữ liệu: Có
+* Idempotent: Có
+
+===========================
+5. LUỒNG REST API TỔNG QUÁT
+===========================
+
+Client
+↓
+DispatcherServlet
+↓
+Controller (@Get/Post/Put/Delete)
+↓
+Service
+↓
+Repository
+↓
+Database
+↑
+Convert JSON
+↑
+Response → Client
+
+=================
+6. TÓM TẮT DỄ NHỚ
+=================
+
+POST   → TẠO MỚI      → @PostMapping
+GET    → LẤY DỮ LIỆU  → @GetMapping
+PUT    → CẬP NHẬT     → @PutMapping
+DELETE → XÓA          → @DeleteMapping
+
