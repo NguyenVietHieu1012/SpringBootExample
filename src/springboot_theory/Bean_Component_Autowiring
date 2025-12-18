@@ -1,79 +1,222 @@
-GIẢI THÍCH CƠ BẢN SPRING BOOT (NGẮN GỌN + VÍ DỤ)
+==================================================
+@BEAN – @COMPONENT – @AUTOWIRED TRONG SPRING BOOT
+==================================================
 
-1. Bean là gì?
-- Bean là một object do Spring tạo và quản lý.
-- Spring sẽ tạo object sẵn và lưu trong Spring Container.
-- Khi cần dùng, Spring sẽ cấp object đó ra.
+--------------------------------------------------
+1. TỔNG QUAN IoC & DI (NỀN TẢNG)
+--------------------------------------------------
 
-Ví dụ (Java thường):
-    HelloService service = new HelloService();
+IoC (Inversion of Control):
+- Spring quản lý việc tạo object
+- Developer KHÔNG tự new object
 
-Ví dụ (Spring Bean):
+DI (Dependency Injection):
+- Spring tự động inject các dependency cần thiết
+- Giảm coupling, dễ test, dễ mở rộng
+
+@Bean, @Component, @Autowired đều phục vụ cho IoC + DI
+
+--------------------------------------------------
+2. @COMPONENT
+--------------------------------------------------
+
+2.1 @Component là gì?
+- Dùng để đánh dấu một CLASS là Spring Bean
+- Spring sẽ tự động tạo object và quản lý vòng đời
+
+Ví dụ:
     @Component
-    public class HelloService {}
+    public class StudentService {}
 
-→ Spring tự tạo object HelloService, bạn không cần new.
+=> StudentService được đưa vào IoC Container
 
 
-2. @Component là gì?
-- @Component dùng để đánh dấu một class là Bean.
-- Khi Spring Boot khởi động, nó sẽ quét project.
-- Class nào có @Component thì Spring sẽ tạo Bean cho class đó.
+2.2 Các annotation liên quan
+- @Component
+- @Service      (business logic)
+- @Repository   (data access)
+- @Controller / @RestController (web layer)
+
+=> Bản chất giống nhau, khác ý nghĩa
+
+
+2.3 Luồng hoạt động của @Component
+
+Application start
+→ Component Scan
+→ Phát hiện class có @Component
+→ Spring tạo object
+→ Đưa object vào IoC Container
+→ Sẵn sàng để inject
+
+
+2.4 Khi nào dùng @Component?
+- Class do bạn tự viết
+- Logic nghiệp vụ
+- Controller, Service, Repository
+- Không cần cấu hình phức tạp
+
+
+2.5 Lỗi hay gặp với @Component
+
+❌ Class nằm ngoài package scan
+→ Spring không tìm thấy bean
+
+❌ Quên annotation
+→ Autowired bị lỗi NoSuchBeanDefinitionException
+
+
+--------------------------------------------------
+3. @BEAN
+--------------------------------------------------
+
+3.1 @Bean là gì?
+- Dùng để khai báo Bean thông qua METHOD
+- Thường đặt trong class @Configuration
+- Dùng khi bạn MUỐN TỰ TẠO object
 
 Ví dụ:
-@Component
-public class HelloService {
+    @Configuration
+    public class AppConfig {
 
-    public String sayHello() {
-        return "Hello Spring Boot";
+        @Bean
+        public ObjectMapper objectMapper() {
+            return new ObjectMapper();
+        }
     }
-}
-
-→ HelloService trở thành Bean do Spring quản lý.
 
 
-3. @Autowired là gì?
-- @Autowired dùng để yêu cầu Spring inject (truyền) Bean vào class khác.
-- Bạn không cần tự tạo object bằng new.
-- Spring sẽ tìm Bean phù hợp và gán vào biến.
+3.2 Luồng hoạt động của @Bean
+
+Application start
+→ Scan @Configuration
+→ Gặp method có @Bean
+→ Spring gọi method
+→ Lấy object trả về
+→ Đưa object vào IoC Container
+
+
+3.3 Khi nào PHẢI dùng @Bean?
+- Class của thư viện bên ngoài (không sửa được)
+- Cần cấu hình object trước khi dùng
+- CommandLineRunner
+- Filter, Interceptor
+- SDK, client, utility
+
+
+3.4 So sánh @Bean vs @Component
+
+| Tiêu chí        | @Component          | @Bean                |
+|-----------------|---------------------|---------------------|
+| Đặt ở đâu       | Trên class          | Trên method         |
+| Tạo object      | Spring tự tạo       | Dev tự tạo          |
+| Dùng khi        | Class nội bộ        | Lib / config        |
+| Linh hoạt       | Thấp                | Cao                 |
+
+
+3.5 Lỗi hay gặp với @Bean
+
+❌ Quên @Configuration
+→ Bean không được tạo
+
+❌ Trùng tên Bean
+→ BeanDefinitionOverrideException
+
+❌ Logic nặng trong @Bean
+→ App start chậm
+
+
+--------------------------------------------------
+4. @AUTOWIRED
+--------------------------------------------------
+
+4.1 @Autowired là gì?
+- Dùng để inject Bean từ IoC Container
+- Spring tự tìm bean phù hợp theo TYPE (mặc định)
 
 Ví dụ:
-@RestController
-public class HelloController {
+@Autowired
+private StudentService studentService;
 
-    @Autowired
-    private HelloService helloService;
+4.2 Luồng hoạt động của @Autowired
 
-    @GetMapping("/hello")
-    public String hello() {
-        return helloService.sayHello();
-    }
+Spring tạo bean A
+→ Phát hiện @Autowired
+→ Tìm bean phù hợp trong container
+→ Inject vào field / constructor / setter
+→ Bean hoàn chỉnh
+
+
+4.3 Các cách dùng @Autowired
+
+a) Field Injection (không khuyến khích)
+@Autowired
+private StudentService service;
+
+b) Constructor Injection (KHUYẾN NGHỊ)
+public StudentController(StudentService service) {
+    this.service = service;
 }
 
-→ Spring tự động truyền HelloService vào HelloController.
+c) Setter Injection (ít dùng)
+
+4.4 Khi nào dùng @Autowired?
+- Khi cần sử dụng bean khác
+- Controller gọi Service
+- Service gọi Repository
 
 
-4. @GetMapping là gì?
-- @GetMapping dùng để ánh xạ URL với method.
-- Khi client gửi HTTP GET request, Spring gọi method tương ứng.
+4.5 Lỗi hay gặp với @Autowired
 
-Ví dụ:
-@GetMapping("/hello")
-public String hello() {
-    return "Hello";
-}
+❌ Không có bean phù hợp
+→ NoSuchBeanDefinitionException
 
-→ Truy cập: http://localhost:8080/hello
+❌ Có nhiều bean cùng type
+→ NoUniqueBeanDefinitionException
+→ Giải pháp: @Qualifier
+
+❌ Inject circular dependency
+→ BeanCurrentlyInCreationException
 
 
-5. @RestController là gì?
-- @RestController dùng cho class xử lý request web.
-- Method trả về dữ liệu trực tiếp (String, JSON, Object).
-- Không cần giao diện HTML.
+--------------------------------------------------
+5. LUỒNG HOẠT ĐỘNG TỔNG THỂ
+--------------------------------------------------
 
-TÓM TẮT:
-- Bean: object do Spring quản lý
-- @Component: đánh dấu class là Bean
-- @Autowired: Spring tự truyền Bean vào
-- @GetMapping: gắn URL cho method
-- @RestController: class xử lý request HTTP
+Chạy ứng dụng
+→ Component Scan
+→ Tạo Bean (@Component / @Bean)
+→ Lưu Bean vào IoC Container
+→ Resolve @Autowired
+→ Application Ready
+→ Nhận request
+
+
+--------------------------------------------------
+6. GHI NHỚ NHANH
+--------------------------------------------------
+
+@COMPONENT
+- Dành cho class do bạn viết
+- Spring tự tạo object
+
+@BEAN
+- Dành cho config & lib ngoài
+- Bạn tự tạo object
+
+@AUTOWIRED
+- Dùng để inject bean
+- Spring tự tìm & gán dependency
+
+
+--------------------------------------------------
+7. BEST PRACTICE
+--------------------------------------------------
+
+- Ưu tiên Constructor Injection
+- Service dùng @Service
+- Repository dùng @Repository
+- Config dùng @Configuration + @Bean
+- Không lạm dụng @Component
+
+
