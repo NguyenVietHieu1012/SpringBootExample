@@ -1,4 +1,4 @@
-package com.example.example.controller;
+package com.example.example.controller.v1;
 
 import com.example.example.specification.StudentSpecification;
 import org.springframework.data.domain.Page;
@@ -15,13 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
-@RequestMapping("/students")
-public class StudentController {
+@RequestMapping("/api/v1/students")
+public class StudentControllerV1 {
     @Autowired
     private StudentRepository studentRepository;
 
@@ -30,28 +27,28 @@ public class StudentController {
     public String list(Model model) {
         model.addAttribute("students",
                 studentRepository.findAll());
-        return "student-list";
+        return "student-list-v1";
     }
 
     // Form thêm mới
     @GetMapping("/new")
     public String createForm(Model model) {
         model.addAttribute("student", new Student());
-        return "student-form";
+        return "student-form-v1";
     }
 
     // Lưu (thêm / sửa)
     @PostMapping("/save")
     public String save(Student student) {
         studentRepository.save(student);
-        return "redirect:/students";
+        return "redirect:/api/v1/students";
     }
 
     // Xóa
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         studentRepository.deleteById(id);
-        return "redirect:/students";
+        return "redirect:/api/v1/students";
     }
 
     @GetMapping("/ping")

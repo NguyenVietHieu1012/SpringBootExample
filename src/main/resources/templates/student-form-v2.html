@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>🎃 Hồ sơ học sinh</title>
+
+  <style>
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: radial-gradient(circle at top, #2b1055, #0b0014);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: #f5f5f5;
+    }
+
+    .card {
+        background: linear-gradient(180deg, #2d0b00, #140700);
+        padding: 28px 34px;
+        width: 380px;
+        border-radius: 14px;
+        box-shadow:
+            0 0 20px rgba(255, 102, 0, 0.35),
+            inset 0 0 10px rgba(255, 140, 0, 0.15);
+        border: 1px solid #ff6a00;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 26px;
+        font-size: 22px;
+        color: #ff9f1c;
+        letter-spacing: 1px;
+        text-shadow: 0 0 6px rgba(255, 159, 28, 0.6);
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #ffd8a8;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1px solid #ff8c42;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: #1b0a05;
+        color: #fff;
+    }
+
+    input::placeholder {
+        color: #d9b08c;
+    }
+
+    input:focus {
+        outline: none;
+        box-shadow: 0 0 8px rgba(255, 140, 66, 0.6);
+        border-color: #ff9f1c;
+    }
+
+    button {
+        width: 100%;
+        padding: 11px;
+        background: linear-gradient(135deg, #ff6a00, #ff9f1c);
+        color: #1a0700;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(255, 106, 0, 0.6);
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        color: #ffb703;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+        color: #ffd166;
+    }
+
+    .pumpkin {
+        text-align: center;
+        font-size: 36px;
+        margin-bottom: 10px;
+        filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.6));
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="pumpkin">🎃</div>
+  <h2>Hồ sơ học sinh</h2>
+
+  <form action="/students/save" method="post"
+        th:object="${student}">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="form-group">
+      <label for="name">👻 Tên học sinh</label>
+      <input type="text" id="name" th:field="*{name}" required/>
+    </div>
+
+    <div class="form-group">
+      <label for="age">🕸️ Tuổi</label>
+      <input type="number" id="age" th:field="*{age}" min="1" required/>
+    </div>
+
+    <button type="submit">🧙‍♂️ Lưu hồ sơ</button>
+  </form>
+
+  <a href="/students" class="back-link">⬅ Trở về nghĩa địa danh sách</a>
+</div>
+
+</body>
+</html>
