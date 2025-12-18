@@ -95,7 +95,7 @@
 
     <div class="top-bar">
         <span>Tổng số: <b th:text="${students.size()}"></b> học sinh</span>
-        <a href="/students/new" class="add-btn">➕ Thêm học sinh</a>
+        <a href="students/new" class="add-btn">➕ Thêm học sinh</a>
     </div>
 
     <table>
@@ -115,7 +115,7 @@
             <td th:text="${s.age}"></td>
             <td>
                 <a class="delete-link"
-                   th:href="@{/students/delete/{id}(id=${s.id})}">
+                   th:href="@{/api/v1/students/delete/{id}(id=${s.id})}">
                     ❌ Xóa
                 </a>
             </td>

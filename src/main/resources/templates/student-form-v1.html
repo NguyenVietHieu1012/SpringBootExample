@@ -83,7 +83,7 @@
 <div class="card">
     <h2>Thông tin học sinh</h2>
 
-    <form action="/students/save" method="post"
+    <form action="/api/v1/students/save" method="post"
           th:object="${student}">
 
         <input type="hidden" th:field="*{id}"/>
@@ -101,7 +101,7 @@
         <button type="submit">💾 Lưu</button>
     </form>
 
-    <a href="/students" class="back-link">⬅ Quay lại danh sách</a>
+    <a href="api/v1/students" class="back-link">⬅ Quay lại danh sách</a>
 </div>
 
 </body>

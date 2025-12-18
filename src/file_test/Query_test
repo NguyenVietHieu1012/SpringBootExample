@@ -1,14 +1,14 @@
 # tìm chứa chuỗi (case-insensitive)
-http://localhost:8081/students/search/contains/an
+http://localhost:8081/api/v2/students/search/contains/an
 
 # top 3 oldest
-http://localhost:8081/students/search/top3/oldest
+http://localhost:8081/api/v2/students/search/top3/oldest
 
 # check exists
-http://localhost:8081/students/search/exists/An ???
+http://localhost:8081/api/v2/students/search/exists/An ???
 
 # tìm theo ids
-http://localhost:8081/students/search/ids?ids=1,2,3 ???
+http://localhost:8081/api/v2/students/search/ids?ids=1,2,3 ???
 
 # tìm theo khoảng tuổi
-http://localhost:8081/students/search/between?min=18&max=25
+http://localhost:8081/api/v2/students/search/between?min=18&max=25

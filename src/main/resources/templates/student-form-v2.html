@@ -115,7 +115,7 @@
   <div class="pumpkin">🎃</div>
   <h2>Hồ sơ học sinh</h2>
 
-  <form action="/students/save" method="post"
+  <form action="/api/v2/students/save" method="post"
         th:object="${student}">
 
     <input type="hidden" th:field="*{id}"/>
@@ -133,7 +133,7 @@
     <button type="submit">🧙‍♂️ Lưu hồ sơ</button>
   </form>
 
-  <a href="/students" class="back-link">⬅ Trở về nghĩa địa danh sách</a>
+  <a href="api/v2/students" class="back-link">⬅ Trở về nghĩa địa danh sách</a>
 </div>
 
 </body>
