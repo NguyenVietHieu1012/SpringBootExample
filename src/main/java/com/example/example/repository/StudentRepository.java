@@ -16,7 +16,7 @@ public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpec
 
     // Bắt buộc có JpaSpecificationExecutor<Student> để sử dụng Specification
 
-    //---------------------------------Query methods------------------------------------------------
+    //---------------------------------Query methods---------------------------------------
 
     // Tìm theo exact name
     List<Student> findByName(String name);

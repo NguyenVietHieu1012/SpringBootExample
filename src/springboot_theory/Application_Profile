@@ -17,7 +17,6 @@ Trong Spring Boot thường có:
 - test : kiểm thử
 - prod : chạy thật
 
-
 ==================================================
 2. Vì sao cần Application Profile?
 ==================================================
@@ -68,7 +67,6 @@ Nghĩa:
 - Chạy server ở cổng 80
 - Môi trường PROD
 
-
 ==================================================
 5. Bật Profile trong Spring Boot
 ==================================================
@@ -87,7 +85,6 @@ Cách 2: Bật khi chạy chương trình
 
 Nghĩa:
 - Ứng dụng chạy ở chế độ PROD
-
 
 ==================================================
 6. Lấy giá trị cấu hình theo Profile
@@ -110,7 +107,6 @@ private String message;
 
 Nghĩa:
 - Profile nào đang chạy thì lấy message của profile đó
-
 
 ==================================================
 7. Ví dụ dùng @Profile trong Spring
@@ -149,7 +145,6 @@ public class ProdMessageService implements MessageService {
 Nghĩa:
 - Spring chỉ tạo Bean đúng với profile đang chạy
 
-
 ==================================================
 8. Lưu ý quan trọng
 ==================================================
@@ -157,7 +152,6 @@ Nghĩa:
 - Chỉ có 1 profile được active tại một thời điểm (thường).
 - Không nên hard-code giá trị môi trường trong code.
 - Profile giúp code sạch và dễ triển khai.
-
 
 ==================================================
 9. Tóm tắt nhanh

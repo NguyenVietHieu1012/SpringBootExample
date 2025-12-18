@@ -1,28 +1,134 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách học sinh</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f6f8;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            padding: 24px 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .add-btn {
+            text-decoration: none;
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .add-btn:hover {
+            background-color: #43a047;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f2f5;
+            font-weight: 600;
+        }
+
+        tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background-color: #fafafa;
+        }
+
+        .delete-link {
+            color: #e53935;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .delete-link:hover {
+            text-decoration: underline;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+            padding: 16px;
+        }
+    </style>
+</head>
+
 <body>
-<h2>DANH SÁCH HỌC SINH</h2>
 
-<a href="/students/new">➕ Thêm học sinh</a>
+<div class="container">
+    <h2>Danh sách học sinh</h2>
 
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Tên</th>
-        <th>Tuổi</th>
-        <th>Hành động</th>
-    </tr>
+    <div class="top-bar">
+        <span>Tổng số: <b th:text="${students.size()}"></b> học sinh</span>
+        <a href="/students/new" class="add-btn">➕ Thêm học sinh</a>
+    </div>
 
-    <tr th:each="s : ${students}">
-        <td th:text="${s.id}"></td>
-        <td th:text="${s.name}"></td>
-        <td th:text="${s.age}"></td>
-        <td>
-            <a th:href="@{/students/delete/{id}(id=${s.id})}">
-                ❌ Xóa
-            </a>
-        </td>
-    </tr>
-</table>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Tuổi</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="s : ${students}">
+            <td th:text="${s.id}"></td>
+            <td th:text="${s.name}"></td>
+            <td th:text="${s.age}"></td>
+            <td>
+                <a class="delete-link"
+                   th:href="@{/students/delete/{id}(id=${s.id})}">
+                    ❌ Xóa
+                </a>
+            </td>
+        </tr>
+
+        <tr th:if="${students.isEmpty()}">
+            <td colspan="4" class="empty">
+                Chưa có học sinh nào
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
 </body>
 </html>
