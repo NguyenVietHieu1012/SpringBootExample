@@ -98,4 +98,5 @@ public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpec
 
     // Phân trang + điều kiện
     Page<Student> findByAgeGreaterThan(int age, Pageable pageable);
+
 }
