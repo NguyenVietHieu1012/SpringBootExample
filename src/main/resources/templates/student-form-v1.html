@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Thông tin học sinh</title>
+    <title th:text="${student.id == null ? 'Thêm học sinh' : 'Sửa học sinh'}">
+        Thông tin học sinh
+    </title>
 
     <style>
         body {
@@ -81,27 +83,45 @@
 <body>
 
 <div class="card">
-    <h2>Thông tin học sinh</h2>
+    <h2 th:text="${student.id == null ? '➕ Thêm học sinh' : '✏️ Sửa học sinh'}">
+        Thông tin học sinh
+    </h2>
 
-    <form action="/api/v1/students/save" method="post"
-          th:object="${student}">
+    <form th:action="@{/api/v1/students/save}"
+          th:object="${student}"
+          method="post">
 
+        <!-- BẮT BUỘC để update -->
         <input type="hidden" th:field="*{id}"/>
 
         <div class="form-group">
             <label for="name">Tên</label>
-            <input type="text" id="name" th:field="*{name}" required/>
+            <input type="text"
+                   id="name"
+                   th:field="*{name}"
+                   placeholder="Nhập tên học sinh"
+                   required/>
         </div>
 
         <div class="form-group">
             <label for="age">Tuổi</label>
-            <input type="number" id="age" th:field="*{age}" min="1" required/>
+            <input type="number"
+                   id="age"
+                   th:field="*{age}"
+                   min="1"
+                   placeholder="Nhập tuổi"
+                   required/>
         </div>
 
-        <button type="submit">💾 Lưu</button>
+        <button type="submit"
+                th:text="${student.id == null ? '💾 Lưu mới' : '💾 Cập nhật'}">
+            💾 Lưu
+        </button>
     </form>
 
-    <a href="api/v1/students" class="back-link">⬅ Quay lại danh sách</a>
+    <a th:href="@{/api/v1/students}" class="back-link">
+        ⬅ Quay lại danh sách
+    </a>
 </div>
 
 </body>

@@ -13,7 +13,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
             background: #ffffff;
             padding: 24px 32px;
@@ -36,7 +36,7 @@
 
         .add-btn {
             text-decoration: none;
-            padding: 8px 12px;
+            padding: 8px 14px;
             background-color: #4CAF50;
             color: white;
             border-radius: 4px;
@@ -70,10 +70,22 @@
             background-color: #fafafa;
         }
 
+        .actions a {
+            margin-right: 10px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .edit-link {
+            color: #1976d2;
+        }
+
+        .edit-link:hover {
+            text-decoration: underline;
+        }
+
         .delete-link {
             color: #e53935;
-            text-decoration: none;
-            font-size: 14px;
         }
 
         .delete-link:hover {
@@ -91,20 +103,26 @@
 <body>
 
 <div class="container">
-    <h2>Danh sách học sinh</h2>
+    <h2>📋 Danh sách học sinh</h2>
 
     <div class="top-bar">
-        <span>Tổng số: <b th:text="${students.size()}"></b> học sinh</span>
-        <a href="students/new" class="add-btn">➕ Thêm học sinh</a>
+        <span>
+            Tổng số:
+            <b th:text="${students.size()}">0</b> học sinh
+        </span>
+
+        <a th:href="@{/api/v1/students/new}" class="add-btn">
+            ➕ Thêm học sinh
+        </a>
     </div>
 
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Tên</th>
-            <th>Tuổi</th>
-            <th>Hành động</th>
+            <th style="width: 10%;">ID</th>
+            <th style="width: 40%;">Tên</th>
+            <th style="width: 15%;">Tuổi</th>
+            <th style="width: 35%;">Hành động</th>
         </tr>
         </thead>
 
@@ -113,9 +131,15 @@
             <td th:text="${s.id}"></td>
             <td th:text="${s.name}"></td>
             <td th:text="${s.age}"></td>
-            <td>
+            <td class="actions">
+                <a class="edit-link"
+                   th:href="@{/api/v1/students/edit/{id}(id=${s.id})}">
+                    ✏️ Sửa
+                </a>
+
                 <a class="delete-link"
-                   th:href="@{/api/v1/students/delete/{id}(id=${s.id})}">
+                   th:href="@{/api/v1/students/delete/{id}(id=${s.id})}"
+                   onclick="return confirm('Bạn có chắc muốn xóa học sinh này?')">
                     ❌ Xóa
                 </a>
             </td>
@@ -129,6 +153,5 @@
         </tbody>
     </table>
 </div>
-
 </body>
 </html>

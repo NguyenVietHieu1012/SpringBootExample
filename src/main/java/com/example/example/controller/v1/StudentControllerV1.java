@@ -37,7 +37,20 @@ public class StudentControllerV1 {
         return "student-form-v1";
     }
 
-    // Lưu (thêm / sửa)
+    // Form sửa
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+        Optional<Student> studentOpt = studentRepository.findById(id);
+
+        if (studentOpt.isEmpty()) {
+            return "redirect:/api/v1/students";
+        }
+
+        model.addAttribute("student", studentOpt.get());
+        return "student-form-v1";
+    }
+
+    // Lưu
     @PostMapping("/save")
     public String save(Student student) {
         studentRepository.save(student);
